@@ -1,0 +1,58 @@
+var mysql = require("mysql");
+var inquirer = require("inquirer");
+
+//variable to refer the database connection
+var connection = mysql.createConnection({
+  host: "localhost",
+  port: 3306,
+
+  // username
+  user: "root",
+
+  // password
+  password: "root",
+  database: "bamazon"
+});
+
+connection.connect(function (err) {
+  if (err) throw err;
+  console.log("connected as id " + connection.threadId + "\n");
+  displayChoices();
+});
+
+//use inquirer to ask the manager what he wants to do from the list
+
+function displayChoices() {
+  inquirer.prompt([{
+    name: 'action',
+    type: 'list',
+    message: "what would you like to do?",
+    choices: ['View Products for Sale', 'View Low Inventory', 'Add to Inventory', 'Add New Product']
+
+  }]).then(function(answer){
+    //Write switch case with functions for each of the options
+    switch(answer.action){
+      case 'View Products for Sale': viewProducts();
+      break;
+
+      case 'View Low Invetory': viewLowInvetory();
+      break;
+
+      case 'Add to Inventory': addInventory();
+      break;
+
+      case 'Add New Product': addProduct();
+      break;
+    }
+
+  })
+}
+
+
+//viewProducts()--read the products file with ids, names, prices, quantities
+
+//viewLowInvetory()--if(stock-quantity<5), console.log those items
+
+//addInventory()--Use inquirer to ask for quantity and item to be added, and update database
+
+//addProduct()--Use inquirer to check what products need to be added, insert into database
