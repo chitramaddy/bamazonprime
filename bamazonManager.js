@@ -29,27 +29,42 @@ function displayChoices() {
     message: "what would you like to do?",
     choices: ['View Products for Sale', 'View Low Inventory', 'Add to Inventory', 'Add New Product']
 
-  }]).then(function(answer){
+  }]).then(function (answer) {
     //Write switch case with functions for each of the options
-    switch(answer.action){
-      case 'View Products for Sale': viewProducts();
-      break;
+    switch (answer.action) {
+      case 'View Products for Sale':
+        viewProducts();
+        break;
 
-      case 'View Low Invetory': viewLowInvetory();
-      break;
+      // case 'View Low Invetory':
+      //   viewLowInvetory();
+      //   break;
 
-      case 'Add to Inventory': addInventory();
-      break;
+      // case 'Add to Inventory':
+      //   addInventory();
+      //   break;
 
-      case 'Add New Product': addProduct();
-      break;
+      // case 'Add New Product':
+      //   addProduct();
+      //   break;
     }
 
   })
 }
 
+//read the products file from the database with ids, names, prices, quantities
+function viewProducts() {
+  connection.query("SELECT item_id, product_name, department_name, price, stock_quantity FROM products", function (err, res) {
+    console.log("Product list");
+    for (var i = 0; i < res.length; i++) {
+      console.log("======================");
+      console.log("Id: " + res[i].item_id + "||Department: " + res[i].department_name + "|| Product: " + res[i].product_name + "||Price($): " + parseInt(res[i].price) + "|| In stock: " + res[i].stock_quantity);
+    }
+  })
+}
 
-//viewProducts()--read the products file with ids, names, prices, quantities
+
+
 
 //viewLowInvetory()--if(stock-quantity<5), console.log those items
 
