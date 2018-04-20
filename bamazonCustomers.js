@@ -73,9 +73,30 @@ function askquestions() {
             //To check if there is enough stock to fulfill customer order
             if (chosenItem.stock_quantity < answer.Qty) {
               console.log("We cannot fulfill your order at this time due to insufficient stock");
+              readProducts();
             } else {
-              console.log("Your order value is $"+chosenItem.price * answer.Qty);
+              console.log("Your order value is $" + chosenItem.price * answer.Qty);
               console.log("Order placed successfully!!!");
+              readProducts();
+
+              var currentStock;
+              currentStock = parseInt(chosenItem.stock_quantity) - parseInt(answer.Qty);
+
+              //Update the products table reflecting reduced stock
+              connection.query(
+                'UPDATE products SET ? WHERE ?',
+
+                [{
+                    stock_quantity: parseInt(currentStock)
+                  },
+                  {
+                    item_id: chosenItem.item_id
+                  }
+                ],
+                function (err) {
+                  if (err) throw err;
+                }
+              )
             }
           })
 
@@ -85,13 +106,3 @@ function askquestions() {
 
   })
 }
-
-
-
-
-//check if customer.order<stock_quantity for the item. if yes, calculate the total price and console log it.
-//update the database for the item by reducing the number of items customer ordered
-
-//if not, console.log out of stock message
-
-//ask the customer if he wants to place another order. startover.
