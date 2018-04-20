@@ -41,19 +41,42 @@ function askquestions() {
     inquirer.prompt([{
       name: 'item',
       type: 'input',
-      message: 'Please enter the Id of the item you want to buy'
+      message: 'Please enter the Id of the item you want to buy',
+      validate: function (value) {
+        if (isNaN(value) === false) {
+          return true;
+        }
+        console.log("You did not enter a valid id");
+        return false;
+      }
     }]).then(function (answer) {
       var chosenItem;
       for (var i = 0; i < results.length; i++) {
-       if (parseInt(results[i].item_id) === parseInt(answer.item)) {
-        chosenItem = results[i];
+        if (parseInt(results[i].item_id) === parseInt(answer.item)) {
+          chosenItem = results[i];
 
+          // Take customer input for quantity
           inquirer.prompt([{
             name: 'Qty',
             type: 'input',
-            message: 'How many of '+chosenItem.product_name+' would you like to buy?'
+            message: 'How many of ' + chosenItem.product_name + ' would you like to buy?',
+            validate: function (value) {
+              if (isNaN(value) === false) {
+                return true;
+              }
+              console.log("You did not enter a valid id");
+              return false;
+            }
           }]).then(function (answer) {
             console.log("You placed an order for " + answer.Qty + " " + chosenItem.product_name);
+
+            //To check if there is enough stock to fulfill customer order
+            if (chosenItem.stock_quantity < answer.Qty) {
+              console.log("We cannot fulfill your order at this time due to insufficient stock");
+            } else {
+              console.log("Your order value is $"+chosenItem.price * answer.Qty);
+              console.log("Order placed successfully!!!");
+            }
           })
 
         }
@@ -65,10 +88,6 @@ function askquestions() {
 
 
 
-//Use inquirer to list the name of the products and let the customer choose the product 
-
-//use inquirer to ask the number of items the customer wants to buy
-//validate if the customer input is a number
 
 //check if customer.order<stock_quantity for the item. if yes, calculate the total price and console log it.
 //update the database for the item by reducing the number of items customer ordered
