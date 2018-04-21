@@ -36,17 +36,17 @@ function displayChoices() {
         viewProducts();
         break;
 
-      // case 'View Low Invetory':
-      //   viewLowInvetory();
-      //   break;
+      case 'View Low Invetory':
+        viewLowInvetory();
+        break;
 
-      // case 'Add to Inventory':
-      //   addInventory();
-      //   break;
+        // case 'Add to Inventory':
+        //   addInventory();
+        //   break;
 
-      // case 'Add New Product':
-      //   addProduct();
-      //   break;
+        // case 'Add New Product':
+        //   addProduct();
+        //   break;
     }
 
   })
@@ -55,10 +55,23 @@ function displayChoices() {
 //read the products file from the database with ids, names, prices, quantities
 function viewProducts() {
   connection.query("SELECT item_id, product_name, department_name, price, stock_quantity FROM products", function (err, res) {
-    console.log("Product list");
+    console.log("Products for sale");
     for (var i = 0; i < res.length; i++) {
       console.log("======================");
       console.log("Id: " + res[i].item_id + "||Department: " + res[i].department_name + "|| Product: " + res[i].product_name + "||Price($): " + parseInt(res[i].price) + "|| In stock: " + res[i].stock_quantity);
+    }
+  })
+}
+
+function viewLowInvetory() {
+  connection.query("SELECT item_id, product_name, department_name, stock_quantity FROM products", function (err, results) {
+    if (err) throw err;
+    console.log(results);
+
+    for (var i = 0; i < results.length; i++) {
+      if (parseInt(results[i].stock_quantity) < 5) {
+        console.log("Id: " + results[i].item_id + "||Department: " + results[i].department_name + "|| Product: " + results[i].product_name + "||Price($): " + parseInt(results[i].price) + "|| In stock: " + results[i].stock_quantity);
+      }
     }
   })
 }
