@@ -36,8 +36,8 @@ function displayChoices() {
         viewProducts();
         break;
 
-      case 'View Low Invetory':
-        viewLowInvetory();
+      case 'View Low Inventory':
+        viewLowInventory();
         break;
 
         // case 'Add to Inventory':
@@ -58,19 +58,21 @@ function viewProducts() {
     console.log("Products for sale");
     for (var i = 0; i < res.length; i++) {
       console.log("======================");
-      console.log("Id: " + res[i].item_id + "||Department: " + res[i].department_name + "|| Product: " + res[i].product_name + "||Price($): " + parseInt(res[i].price) + "|| In stock: " + res[i].stock_quantity);
+      console.log("Id: " + res[i].item_id + "  ||  Department: " + res[i].department_name + "  ||  Product: " + res[i].product_name + "  ||  Price($): " + parseInt(res[i].price).toFixed(2) + "  ||  In stock: " + res[i].stock_quantity);
     }
   })
 }
 
-function viewLowInvetory() {
-  connection.query("SELECT item_id, product_name, department_name, stock_quantity FROM products", function (err, results) {
+function viewLowInventory() {
+  connection.query("SELECT item_id, product_name, department_name, stock_quantity FROM products", function (err, res) {
     if (err) throw err;
-    console.log(results);
 
-    for (var i = 0; i < results.length; i++) {
-      if (parseInt(results[i].stock_quantity) < 5) {
-        console.log("Id: " + results[i].item_id + "||Department: " + results[i].department_name + "|| Product: " + results[i].product_name + "||Price($): " + parseInt(results[i].price) + "|| In stock: " + results[i].stock_quantity);
+    for (var i = 0; i < res.length; i++) {
+      if (parseInt(res[i].stock_quantity) < 5) {
+
+        console.log("Following items are low in stock:")
+        console.log("==============================");
+        console.log("Id: " + res[i].item_id + "  ||  Department: " + res[i].department_name + "  ||  Product: " + res[i].product_name + "  ||  Price($): " + parseInt(res[i].price).toFixed(2) + "  ||  In stock: " + res[i].stock_quantity);
       }
     }
   })
