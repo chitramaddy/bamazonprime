@@ -40,9 +40,9 @@ function displayChoices() {
         viewLowInventory();
         break;
 
-        // case 'Add to Inventory':
-        //   addInventory();
-        //   break;
+        case 'Add to Inventory':
+          addInventory();
+          break;
 
         // case 'Add New Product':
         //   addProduct();
@@ -63,6 +63,7 @@ function viewProducts() {
   })
 }
 
+//if(stock-quantity<5), display those items
 function viewLowInventory() {
   connection.query("SELECT item_id, product_name, department_name, stock_quantity FROM products", function (err, res) {
     if (err) throw err;
@@ -78,11 +79,77 @@ function viewLowInventory() {
   })
 }
 
-
-
-
-//viewLowInvetory()--if(stock-quantity<5), console.log those items
-
 //addInventory()--Use inquirer to ask for quantity and item to be added, and update database
+
+
+function askquestions() {
+  connection.query("SELECT * FROM products", function (err, results) {
+    if (err) throw err;
+
+    //Take manager input for the item they would like to buy
+    inquirer.prompt([{
+      name: 'item',
+      type: 'input',
+      message: 'Please enter the Id of the item you want to update',
+      validate: function (value) {
+        if (isNaN(parseInt(value)) === false) {
+          return true;
+        }
+        console.log("You did not enter a valid id");
+        return false;
+      }
+    }]).then(function (answer) {
+      var chosenItem;
+      for (var i = 0; i < results.length; i++) {
+        if (parseInt(results[i].item_id) === parseInt(answer.item)) {
+          chosenItem = results[i];
+          
+          getQuantity(chosenItem);
+
+        }
+      }
+    })
+
+  })
+}
+
+function getQuantity(chosenItem) {
+  // Take manager input for quantity
+  inquirer.prompt([
+    {
+    name: 'Qty',
+    type: 'input',
+    message: 'How many of ' + chosenItem.product_name + ' would you like to add to the stock?',
+    validate: function (value) {
+      if (isNaN(value) === false) {
+        return true;
+      }
+      console.log("You did not enter a valid id");
+      return false;
+    }
+  }
+]).then(function (answer) {
+      //Update the products table reflecting reduced stock
+      connection.query(
+        'UPDATE products SET ? WHERE ?',
+
+        [{
+            stock_quantity: parseInt(answer.Qty)
+          },
+          {
+            item_id: chosenItem.item_id
+          }
+        ],
+        function (err) {
+          if (err) throw err;
+          console.log("Invetory updated with " + answer.Qty + " " + chosenItem.product_name);
+        })
+      
+    })
+  }
+  function addInventory(){
+    askquestions();
+}
+
 
 //addProduct()--Use inquirer to check what products need to be added, insert into database
