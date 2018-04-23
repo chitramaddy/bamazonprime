@@ -16,7 +16,6 @@ var connection = mysql.createConnection({
 
 connection.connect(function (err) {
   if (err) throw err;
-  console.log("connected as id " + connection.threadId + "\n");
   readProducts();
 });
 
@@ -66,7 +65,7 @@ function askquestions() {
       for (var i = 0; i < results.length; i++) {
         if (parseInt(results[i].item_id) === parseInt(answer.item)) {
           chosenItem = results[i];
-          
+
           getQuantity(chosenItem);
 
         }
@@ -86,7 +85,7 @@ function getQuantity(chosenItem) {
       if (isNaN(value) === false) {
         return true;
       }
-      console.log("You did not enter a valid id");
+      console.log("You did not enter a valid number");
       return false;
     }
   }]).then(function (answer) {
@@ -97,10 +96,6 @@ function getQuantity(chosenItem) {
       console.log("We cannot fulfill your order at this time due to insufficient stock");
       readProducts();
     } else {
-      console.log("Your order value is $" + chosenItem.price * answer.Qty);
-      console.log("Order placed successfully!!!");
-      readProducts();
-
       var currentStock;
       currentStock = parseInt(chosenItem.stock_quantity) - parseInt(answer.Qty);
 
@@ -117,7 +112,11 @@ function getQuantity(chosenItem) {
         ],
         function (err) {
           if (err) throw err;
+          console.log("Your order value is $" + chosenItem.price * answer.Qty);
+          console.log("Order placed successfully!!!");
+          readProducts();
         }
+
       )
     }
   })

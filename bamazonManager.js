@@ -16,7 +16,6 @@ var connection = mysql.createConnection({
 
 connection.connect(function (err) {
   if (err) throw err;
-  console.log("connected as id " + connection.threadId + "\n");
   displayChoices();
 });
 
@@ -59,24 +58,25 @@ function viewProducts() {
       console.log("======================");
       console.log("Id: " + res[i].item_id + "  ||  Department: " + res[i].department_name + "  ||  Product: " + res[i].product_name + "  ||  Price($): " + parseInt(res[i].price).toFixed(2) + "  ||  In stock: " + res[i].stock_quantity);
     }
-  })
+  });
+  displayChoices();
 }
 
 //if(stock-quantity<5), display those items
 function viewLowInventory() {
   connection.query("SELECT item_id, product_name, department_name, stock_quantity FROM products", function (err, res) {
     if (err) throw err;
-
+    console.log("Following items are low in stock:")
     for (var i = 0; i < res.length; i++) {
       if (parseInt(res[i].stock_quantity) < 5) {
 
-        console.log("Following items are low in stock:")
         console.log("==============================");
         console.log("Id: " + res[i].item_id + "  ||  Department: " + res[i].department_name + "  ||  Product: " + res[i].product_name + "  ||  Price($): " + parseInt(res[i].price).toFixed(2) + "  ||  In stock: " + res[i].stock_quantity);
       }
     }
-    console.log("You do not have any items on low inventory");
-  })
+    return ("You do not have any items on low inventory");
+  });
+  displayChoices();
 }
 
 //addInventory()--Use inquirer to ask for quantity and item to be added, and update database
@@ -141,9 +141,9 @@ function getQuantity(chosenItem) {
       function (err) {
         if (err) throw err;
         console.log("Invetory updated with " + answer.Qty + " " + chosenItem.product_name);
-      })
+      });
 
-  })
+  });
 }
 
 function addInventory() {
@@ -195,6 +195,7 @@ function addProduct() {
       function (err, res) {
         if (err) throw err;
         console.log(res.affectedRows + " products inserted.")
-      })
-  })
+      });
+  });
+  displayChoices();
 }
