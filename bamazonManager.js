@@ -21,7 +21,6 @@ connection.connect(function (err) {
 });
 
 //use inquirer to ask the manager what he wants to do from the list
-
 function displayChoices() {
   inquirer.prompt([{
     name: 'action',
@@ -44,9 +43,9 @@ function displayChoices() {
           addInventory();
           break;
 
-        // case 'Add New Product':
-        //   addProduct();
-        //   break;
+        case 'Add New Product':
+          addProduct();
+          break;
     }
 
   })
@@ -153,3 +152,50 @@ function getQuantity(chosenItem) {
 
 
 //addProduct()--Use inquirer to check what products need to be added, insert into database
+function addProduct(){
+  inquirer.prompt([
+    {
+    name: "product",
+    type: "input",
+    message: "Please enter the name of the product you want to add"
+  },
+
+  {
+    name: "department",
+    type: "input",
+    message: "Please enter the department name"
+  },
+
+  {
+    name: "price",
+    type: "input",
+    message: "Please enter the unit price of the item"
+  },
+
+  {
+    name: "Qty",
+    type: "input",
+    message: "Please enter the stock quantity",
+    validate: function (value) {
+      if (isNaN(value) === false) {
+        return true;
+      }
+      console.log("You did not enter a valid id");
+      return false;
+    }
+  }
+]).then (function(answer){
+  connection.query("INSERT INTO products SET ?", 
+  
+    {
+      product_name: answer.product,
+      department_name: answer.department,
+      price: parseInt(answer.price),
+      stock_quantity: answer.Qty
+    },
+  function(err, res){
+    if (err) throw err;
+    console.log(res.affectedRows+" products inserted.")
+  })
+})
+}
