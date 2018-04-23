@@ -39,13 +39,13 @@ function displayChoices() {
         viewLowInventory();
         break;
 
-        case 'Add to Inventory':
-          addInventory();
-          break;
+      case 'Add to Inventory':
+        addInventory();
+        break;
 
-        case 'Add New Product':
-          addProduct();
-          break;
+      case 'Add New Product':
+        addProduct();
+        break;
     }
 
   })
@@ -75,6 +75,7 @@ function viewLowInventory() {
         console.log("Id: " + res[i].item_id + "  ||  Department: " + res[i].department_name + "  ||  Product: " + res[i].product_name + "  ||  Price($): " + parseInt(res[i].price).toFixed(2) + "  ||  In stock: " + res[i].stock_quantity);
       }
     }
+    console.log("You do not have any items on low inventory");
   })
 }
 
@@ -102,7 +103,7 @@ function askquestions() {
       for (var i = 0; i < results.length; i++) {
         if (parseInt(results[i].item_id) === parseInt(answer.item)) {
           chosenItem = results[i];
-          
+
           getQuantity(chosenItem);
 
         }
@@ -114,8 +115,7 @@ function askquestions() {
 
 function getQuantity(chosenItem) {
   // Take manager input for quantity
-  inquirer.prompt([
-    {
+  inquirer.prompt([{
     name: 'Qty',
     type: 'input',
     message: 'How many of ' + chosenItem.product_name + ' would you like to add to the stock?',
@@ -126,76 +126,75 @@ function getQuantity(chosenItem) {
       console.log("You did not enter a valid id");
       return false;
     }
-  }
-]).then(function (answer) {
-      //Update the products table reflecting reduced stock
-      connection.query(
-        'UPDATE products SET ? WHERE ?',
+  }]).then(function (answer) {
+    //Update the products table reflecting reduced stock
+    connection.query(
+      'UPDATE products SET ? WHERE ?',
 
-        [{
-            stock_quantity: parseInt(answer.Qty)
-          },
-          {
-            item_id: chosenItem.item_id
-          }
-        ],
-        function (err) {
-          if (err) throw err;
-          console.log("Invetory updated with " + answer.Qty + " " + chosenItem.product_name);
-        })
-      
-    })
-  }
-  function addInventory(){
-    askquestions();
+      [{
+          stock_quantity: parseInt(answer.Qty)
+        },
+        {
+          item_id: chosenItem.item_id
+        }
+      ],
+      function (err) {
+        if (err) throw err;
+        console.log("Invetory updated with " + answer.Qty + " " + chosenItem.product_name);
+      })
+
+  })
+}
+
+function addInventory() {
+  askquestions();
 }
 
 
 //addProduct()--Use inquirer to check what products need to be added, insert into database
-function addProduct(){
-  inquirer.prompt([
-    {
-    name: "product",
-    type: "input",
-    message: "Please enter the name of the product you want to add"
-  },
-
-  {
-    name: "department",
-    type: "input",
-    message: "Please enter the department name"
-  },
-
-  {
-    name: "price",
-    type: "input",
-    message: "Please enter the unit price of the item"
-  },
-
-  {
-    name: "Qty",
-    type: "input",
-    message: "Please enter the stock quantity",
-    validate: function (value) {
-      if (isNaN(value) === false) {
-        return true;
-      }
-      console.log("You did not enter a valid id");
-      return false;
-    }
-  }
-]).then (function(answer){
-  connection.query("INSERT INTO products SET ?", 
-  
-    {
-      product_name: answer.product,
-      department_name: answer.department,
-      price: parseInt(answer.price),
-      stock_quantity: answer.Qty
+function addProduct() {
+  inquirer.prompt([{
+      name: "product",
+      type: "input",
+      message: "Please enter the name of the product you want to add"
     },
-  function(err, res){
-    if (err) throw err;
-    console.log(res.affectedRows+" products inserted.")
+
+    {
+      name: "department",
+      type: "input",
+      message: "Please enter the department name"
+    },
+
+    {
+      name: "price",
+      type: "input",
+      message: "Please enter the unit price of the item"
+    },
+
+    {
+      name: "Qty",
+      type: "input",
+      message: "Please enter the stock quantity",
+      validate: function (value) {
+        if (isNaN(value) === false) {
+          return true;
+        }
+        console.log("You did not enter a valid id");
+        return false;
+      }
+    }
+  ]).then(function (answer) {
+    connection.query("INSERT INTO products SET ?",
+
+      {
+        product_name: answer.product,
+        department_name: answer.department,
+        price: parseInt(answer.price),
+        stock_quantity: answer.Qty
+      },
+      function (err, res) {
+        if (err) throw err;
+        console.log(res.affectedRows + " products inserted.")
+      })
   })
-})
 }
