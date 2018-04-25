@@ -56,7 +56,7 @@ function viewProducts() {
     console.log("Products for sale");
     for (var i = 0; i < res.length; i++) {
       console.log("======================");
-      console.log("Id: " + res[i].item_id + "  ||  Department: " + res[i].department_name + "  ||  Product: " + res[i].product_name + "  ||  Price($): " + parseInt(res[i].price).toFixed(2) + "  ||  In stock: " + res[i].stock_quantity);
+      console.log("Id: " + res[i].item_id + "  ||  Department: " + res[i].department_name + "  ||  Product: " + res[i].product_name + "  ||  Price($): " + parseFloat(res[i].price).toFixed(2) + "  ||  In stock: " + res[i].stock_quantity);
     }
   });
   displayChoices();
@@ -64,17 +64,21 @@ function viewProducts() {
 
 //if(stock-quantity<5), display those items
 function viewLowInventory() {
-  connection.query("SELECT item_id, product_name, department_name, stock_quantity FROM products", function (err, res) {
+  connection.query("SELECT item_id, product_name, price, department_name, stock_quantity FROM products", function (err, res) {
     if (err) throw err;
+
     console.log("Following items are low in stock:")
+    var lowInventoryFound = false;
     for (var i = 0; i < res.length; i++) {
       if (parseInt(res[i].stock_quantity) < 5) {
-
+        lowInventoryFound = true;
         console.log("==============================");
-        console.log("Id: " + res[i].item_id + "  ||  Department: " + res[i].department_name + "  ||  Product: " + res[i].product_name + "  ||  Price($): " + parseInt(res[i].price).toFixed(2) + "  ||  In stock: " + res[i].stock_quantity);
+        console.log("Id: " + res[i].item_id + "  ||  Department: " + res[i].department_name + "  ||  Product: " + res[i].product_name + "  ||  Price($): " + parseFloat(res[i].price).toFixed(2) + "  ||  In stock: " + res[i].stock_quantity);
       }
     }
-    console.log("You do not have any items on low inventory");
+    if (!lowInventoryFound) {
+      console.log("You do not have any items on low inventory");
+    }
   });
   displayChoices();
 }
@@ -132,7 +136,7 @@ function getQuantity(chosenItem) {
       'UPDATE products SET ? WHERE ?',
 
       [{
-          stock_quantity: parseInt(chosenItem.stock_quantity)+parseInt(answer.Qty)
+          stock_quantity: parseInt(chosenItem.stock_quantity) + parseInt(answer.Qty)
         },
         {
           item_id: chosenItem.item_id
