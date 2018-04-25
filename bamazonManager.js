@@ -74,7 +74,7 @@ function viewLowInventory() {
         console.log("Id: " + res[i].item_id + "  ||  Department: " + res[i].department_name + "  ||  Product: " + res[i].product_name + "  ||  Price($): " + parseInt(res[i].price).toFixed(2) + "  ||  In stock: " + res[i].stock_quantity);
       }
     }
-    return ("You do not have any items on low inventory");
+    console.log("You do not have any items on low inventory");
   });
   displayChoices();
 }
@@ -132,7 +132,7 @@ function getQuantity(chosenItem) {
       'UPDATE products SET ? WHERE ?',
 
       [{
-          stock_quantity: parseInt(answer.Qty)
+          stock_quantity: parseInt(chosenItem.stock_quantity)+parseInt(answer.Qty)
         },
         {
           item_id: chosenItem.item_id
