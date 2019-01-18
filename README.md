@@ -6,4 +6,4 @@ Uses MySql for database and inquirer for interacting with the users.
 Please install the node packages to run the app.
 
 # bamazonCusotmers
-![](
+![](screeshots/cusotmers/bamazonCustomers)
